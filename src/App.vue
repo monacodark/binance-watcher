@@ -2,9 +2,13 @@
   <v-app>
     <v-app-bar
       app
-      color="primary"
-      dark
-    >
+      color=""
+      dark>
+      <v-toolbar-title
+        class="font-weight-black primary--text"
+        color="">
+        BINANCE WATCHER
+      </v-toolbar-title>
 
       <v-spacer></v-spacer>
 
