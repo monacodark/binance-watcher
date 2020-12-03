@@ -14,9 +14,9 @@
 
     </v-app-bar>
 
-    <v-main>
-      <HelloWorld/>
-    </v-main>
+    <div class="main-wrapper">
+      <router-view />
+    </div>
   </v-app>
 </template>
 
@@ -31,3 +31,9 @@ export default {
   })
 }
 </script>
+
+<style lang="scss">
+  .main-wrapper {
+    padding-top: 75px;
+  }
+</style>
