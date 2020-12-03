@@ -10,8 +10,7 @@
         BINANCE WATCHER
       </v-toolbar-title>
 
-      <v-spacer></v-spacer>
-
+      <v-spacer />
     </v-app-bar>
 
     <div class="main-wrapper">
@@ -22,13 +21,11 @@
 
 <script>
 export default {
-  name: 'App',
-
+  name: 'app',
   components: {},
-
   data: () => ({
     //
-  })
+  }),
 }
 </script>
 

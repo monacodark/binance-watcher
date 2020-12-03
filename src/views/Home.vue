@@ -1,12 +1,12 @@
 <template>
-  <div class='home'>
+  <div class="home">
     <v-container>
       <v-row>
         <v-col
-          cols='12'
-          xs='12'
-          sm='8'
-          md='8'>
+          cols="12"
+          xs="12"
+          sm="8"
+          md="8">
           <v-card>
             <v-card-title>
               Title
@@ -15,7 +15,11 @@
             <v-divider />
 
             <v-card-text>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea, sapiente. Iure delectus suscipit soluta natus omnis sint tempore eveniet? Non nostrum, ratione distinctio sunt accusamus neque vel repellat ipsa placeat?
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+              Ea, sapiente. Iure delectus suscipit soluta natus omnis
+              sint tempore eveniet?
+              Non nostrum, ratione distinctio sunt accusamus neque
+              vel repellat ipsa placeat?
             </v-card-text>
 
             <v-divider />
@@ -27,10 +31,10 @@
         </v-col>
 
         <v-col
-          cols='12'
-          xs='12'
-          sm='4'
-          md='4'>
+          cols="12"
+          xs="12"
+          sm="4"
+          md="4">
           <v-card>
             <v-card-title>
               Watchlist
@@ -38,7 +42,9 @@
               <v-spacer />
 
               <v-btn icon>
-                <v-icon color="grey lighten-1">mdi-plus</v-icon>
+                <v-icon
+                  color="grey lighten-1"
+                  v-text="'mdi-plus'" />
               </v-btn>
             </v-card-title>
 
@@ -52,7 +58,7 @@
                       <th class="text-left">
                         Ticker
                       </th>
-                      <th></th>
+                      <th />
                     </tr>
                   </thead>
                   <tbody>
@@ -60,7 +66,9 @@
                       <td>BTCUSDT</td>
                       <td class="text-right">
                         <v-btn icon>
-                          <v-icon color="grey lighten-1">mdi-information</v-icon>
+                          <v-icon
+                            color="grey lighten-1"
+                            v-text="'mdi-information'" />
                         </v-btn>
                       </td>
                     </tr>
@@ -79,17 +87,17 @@
 // @ is an alias to /src
 
 export default {
-  name: 'Home',
+  name: 'home',
   components: {},
-  data () {
+  data() {
     return {
-      selectedItem: 0
+      selectedItem: 0,
     }
   },
   methods: {
-    clickForTicker () {
+    clickForTicker() {
       console.log('click')
-    }
-  }
+    },
+  },
 }
 </script>
