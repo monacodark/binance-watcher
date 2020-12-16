@@ -1,3 +1,24 @@
+<script>
+import {BinanceClient} from './services/BinanceClient'
+
+const binanceClient = new BinanceClient()
+
+export default {
+  name: 'app',
+  components: {},
+  data: () => ({
+    //
+  }),
+  async mounted() {
+    const info = await binanceClient.getKlines({
+      symbol: 'BNBBTC',
+      interval: '15md',
+    })
+    console.log(info)
+  },
+}
+</script>
+
 <template>
   <v-app>
     <v-app-bar
@@ -18,16 +39,6 @@
     </div>
   </v-app>
 </template>
-
-<script>
-export default {
-  name: 'app',
-  components: {},
-  data: () => ({
-    //
-  }),
-}
-</script>
 
 <style lang="scss">
   .main-wrapper {

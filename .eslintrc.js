@@ -22,7 +22,8 @@ module.exports = {
       'singleline': 'never',
       'multiline': 'never'
     }],
-    'semi': ['error', 'never']
+    'semi': ['error', 'never'],
+    'vue/attribute-hyphenation': 'off'
   },
   overrides: [
     {
