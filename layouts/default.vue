@@ -1,7 +1,7 @@
 <script>
-import {BinanceClient} from './services/BinanceClient'
+// import {BinanceClient} from './services/BinanceClient'
 
-const binanceClient = new BinanceClient()
+// const binanceClient = new BinanceClient()
 
 export default {
   name: 'app',
@@ -10,11 +10,11 @@ export default {
     //
   }),
   async mounted() {
-    const info = await binanceClient.getKlines({
-      symbol: 'BNBBTC',
-      interval: '15md',
-    })
-    console.log(info)
+    // const info = await binanceClient.getKlines({
+    //   symbol: 'BNBBTC',
+    //   interval: '15md',
+    // })
+    // console.log(info)
   },
 }
 </script>
@@ -35,7 +35,7 @@ export default {
     </v-app-bar>
 
     <div class="main-wrapper">
-      <router-view />
+      <nuxt />
     </div>
   </v-app>
 </template>

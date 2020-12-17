@@ -20,10 +20,9 @@ module.exports = {
     'vue/no-v-html': 'off',
     'vue/html-closing-bracket-newline': ['error', {
       'singleline': 'never',
-      'multiline': 'never'
+      'multiline': 'never',
     }],
     'semi': ['error', 'never'],
-    'vue/attribute-hyphenation': 'off'
   },
   overrides: [
     {
@@ -36,4 +35,4 @@ module.exports = {
       },
     },
   ],
-};
+}

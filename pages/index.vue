@@ -8,6 +8,23 @@ export default {
     'watch-list': WatchList,
     'chart': Chart,
   },
+  data() {
+    return {
+      connection: null,
+    }
+  },
+  mounted() {
+    // console.log('starting connection')
+    // this.connection = new WebSocket('wss://stream.binance.com:9443/stream?streams=bnbbtc@trade')
+
+    // this.connection.onopen = (event) => {
+    //   console.log('successfully connection', event)
+    // }
+
+    // this.connection.onmessage = (event) => {
+    //   // console.log('message', event)
+    // }
+  },
 }
 </script>
 
@@ -33,3 +50,4 @@ export default {
     </v-container>
   </div>
 </template>
+
