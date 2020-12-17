@@ -7,14 +7,17 @@ export default {
   name: 'app',
   components: {},
   data: () => ({
-    //
+    // watchlistVisible: true,
   }),
-  async mounted() {
-    // const info = await binanceClient.getKlines({
-    //   symbol: 'BNBBTC',
-    //   interval: '15md',
-    // })
-    // console.log(info)
+  computed: {
+    watchlistVisible() {
+      return this.$store.getters.watchlistVisible
+    },
+  },
+  methods: {
+    toogleWatchlistVisible() {
+      this.$store.dispatch('setWatchlistVisible', !this.watchlistVisible)
+    },
   },
 }
 </script>
@@ -32,6 +35,14 @@ export default {
       </v-toolbar-title>
 
       <v-spacer />
+
+      <v-btn
+        :class="watchlistVisible ? '' : 'watchlist-btn_depressed'"
+        :outlined="watchlistVisible"
+        color="primary"
+        @click="toogleWatchlistVisible">
+        Watchlist
+      </v-btn>
     </v-app-bar>
 
     <div class="main-wrapper">
@@ -43,5 +54,10 @@ export default {
 <style lang="scss">
   .main-wrapper {
     padding-top: 75px;
+  }
+
+  .watchlist-btn_depressed {
+    color: #212121 !important;
+    border: thin solid;
   }
 </style>

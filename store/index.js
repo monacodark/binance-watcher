@@ -1,6 +1,12 @@
 export const state = () => ({
-
+  watchlistVisible: false,
 })
+
+export const getters = {
+  watchlistVisible(state) {
+    return state.watchlistVisible
+  },
+}
 
 export const mutations = {
   SOCKET_ONOPEN(ctx, data) {
@@ -9,10 +15,13 @@ export const mutations = {
   SOCKET_ONMESSAGE(ctx, data) {
     // console.log('Message', data)
   },
+  watchlistVisible(state, payload) {
+    state.watchlistVisible = payload
+  },
 }
 
 export const actions = {
-  // SOCKET_ONOPEN(ctx, data) {
-  //   console.log('Open', data, ctx)
-  // },
+  setWatchlistVisible({commit}, payload) {
+    commit('watchlistVisible', payload)
+  },
 }

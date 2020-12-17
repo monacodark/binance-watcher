@@ -10,20 +10,13 @@ export default {
   },
   data() {
     return {
-      connection: null,
+      // connection: null,
     }
   },
-  mounted() {
-    // console.log('starting connection')
-    // this.connection = new WebSocket('wss://stream.binance.com:9443/stream?streams=bnbbtc@trade')
-
-    // this.connection.onopen = (event) => {
-    //   console.log('successfully connection', event)
-    // }
-
-    // this.connection.onmessage = (event) => {
-    //   // console.log('message', event)
-    // }
+  computed: {
+    watchlistVisible() {
+      return this.$store.getters.watchlistVisible
+    },
   },
 }
 </script>
@@ -36,11 +29,12 @@ export default {
         <v-col
           cols="12"
           xs="12"
-          sm="8">
+          :sm="watchlistVisible ? '8' : '12'">
           <chart />
         </v-col>
 
         <v-col
+          v-if="watchlistVisible"
           cols="12"
           xs="12"
           sm="4">
