@@ -13,6 +13,11 @@ export default {
       selectedItem: 0,
     }
   },
+  computed: {
+    watchList() {
+      return this.$store.getters.watchList
+    },
+  },
 }
 </script>
 
@@ -32,7 +37,10 @@ export default {
       <v-simple-table>
         <template v-slot:default>
           <tbody>
-            <watch-item />
+            <watch-item
+              v-for="item in watchList"
+              :key="item.ticker"
+              :data="item" />
           </tbody>
         </template>
       </v-simple-table>

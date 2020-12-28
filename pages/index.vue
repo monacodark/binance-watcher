@@ -18,6 +18,10 @@ export default {
       return this.$store.getters.watchlistVisible
     },
   },
+  mounted() {
+    this.$store.dispatch('loadTickerList')
+    this.$store.dispatch('initLocalData')
+  },
 }
 </script>
 
@@ -29,7 +33,8 @@ export default {
         <v-col
           cols="12"
           xs="12"
-          :sm="watchlistVisible ? '8' : '12'">
+          :sm="watchlistVisible ? '8' : '12'"
+          :lg="watchlistVisible ? '9' : '12'">
           <chart />
         </v-col>
 
@@ -37,7 +42,8 @@ export default {
           v-if="watchlistVisible"
           cols="12"
           xs="12"
-          sm="4">
+          sm="4"
+          lg="3">
           <watch-list />
         </v-col>
       </v-row>

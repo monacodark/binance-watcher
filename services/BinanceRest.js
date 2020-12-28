@@ -2,7 +2,7 @@ import {_HttpClient} from './_HttpClient'
 /**
  * https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md
  */
-export class BinanceClient extends _HttpClient {
+export class BinanceRest extends _HttpClient {
   /**
    * construnctor
    */

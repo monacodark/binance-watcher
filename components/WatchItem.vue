@@ -4,6 +4,23 @@
 export default {
   name: 'watch-item',
   components: {},
+  props: {
+    data: Object,
+  },
+  data() {
+    return {
+      progress: '',
+    }
+  },
+  mounted() {
+    setInterval(
+        () => {
+          if (this.progress.length <= 10) this.progress += '-'
+          else this.progress = '-'
+        },
+        100,
+    )
+  },
   methods: {
     clickForTicker(e) {
       console.log('click', e)
@@ -21,8 +38,8 @@ export default {
     <td
       class="ticker__label"
       @click="clickForTicker">
-      BTCUSDT
-      19300
+      {{ data.ticker.toUpperCase() }}
+      {{ data.price || progress }}
     </td>
     <td
       class="text-right">

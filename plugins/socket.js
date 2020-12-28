@@ -7,7 +7,7 @@ import VueNativeSock from 'vue-native-websocket'
 export default function({store}) {
   Vue.use(
       VueNativeSock,
-      'wss://stream.binance.com:9443/stream?streams=bnbbtc@trade/ethbtc@trade',
+      'wss://stream.binance.com:9443/stream',
       {
         store: store,
         reconnection: true,

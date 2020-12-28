@@ -1,13 +1,8 @@
 <script>
-// import {BinanceClient} from './services/BinanceClient'
-
-// const binanceClient = new BinanceClient()
-
 export default {
   name: 'app',
   components: {},
   data: () => ({
-    // watchlistVisible: true,
   }),
   computed: {
     watchlistVisible() {
@@ -36,10 +31,16 @@ export default {
 
       <v-spacer />
 
+      <!-- <v-progress-circular
+        :size="30"
+        color="primary"
+        indeterminate /> -->
+
       <v-btn
         :class="watchlistVisible ? '' : 'watchlist-btn_depressed'"
         :outlined="watchlistVisible"
         color="primary"
+        small
         @click="toogleWatchlistVisible">
         Watchlist
       </v-btn>

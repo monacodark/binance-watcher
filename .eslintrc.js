@@ -15,7 +15,7 @@ module.exports = {
   },
   rules: {
     'vue/name-property-casing': ['error', 'kebab-case'],
-    'vue/attribute-hyphenation': ['error', 'never'],
+    'vue/attribute-hyphenation': ['off'],
     'vue/require-default-prop': 'off',
     'vue/no-v-html': 'off',
     'vue/html-closing-bracket-newline': ['error', {
