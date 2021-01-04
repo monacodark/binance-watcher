@@ -1,24 +1,21 @@
 <script>
-import VirtualList from 'vue-virtual-scroll-list'
-import WatchListAddItem from './WatchListAddItem'
 
 export default {
   name: 'watch-list-add',
   components: {
-    'virtual-list': VirtualList,
   },
   data() {
     return {
-      item: WatchListAddItem,
       dialog: false,
       timerId: null,
       selectValue: '',
       searchValue: '',
       inputSearchValue: '',
+      listSize: 6,
     }
   },
   computed: {
-    tickerList() {
+    filteredTickerList() {
       return this.$store.getters.tickerList
           .filter((ticker) => {
             if (
@@ -32,6 +29,9 @@ export default {
               return ticker.ticker === _ticker.ticker
             })
           })
+    },
+    croppedTickerList() {
+      return this.filteredTickerList.slice(0, this.listSize)
     },
   },
   methods: {
@@ -56,6 +56,7 @@ export default {
       this.timerId = setTimeout(
           async () => {
             this.searchValue = e
+            this.selectValue = ''
           },
           500,
       )
@@ -72,11 +73,11 @@ export default {
     <template v-slot:activator="{ on, attrs }">
       <v-btn
         icon
+        v-bind="attrs"
+        v-on="on"
         @click="openDialog">
         <v-icon
           color="grey lighten-1"
-          v-bind="attrs"
-          v-on="on"
           v-text="'mdi-plus'" />
       </v-btn>
     </template>
@@ -94,17 +95,22 @@ export default {
       <v-divider />
 
       <v-card-text
-        style="height: 300px; padding: 0px;">
+        class="dialog-body">
         <v-radio-group
           v-model="selectValue"
-          style="margin-top: 0px"
+          class="ticker-list"
           column>
-          <virtual-list
-            style="height: 300px; overflow-y: auto;"
-            :data-key="'ticker'"
-            :data-sources="tickerList"
-            :data-component="item" />
+          <v-radio
+            v-for="item in croppedTickerList"
+            :key="item.ticker"
+            class="ticker-item"
+            :label="item.ticker.toUpperCase()"
+            :value="item.ticker" />
         </v-radio-group>
+        <div
+          v-if="filteredTickerList.length > listSize">
+          ..and {{ filteredTickerList.length - listSize }} items
+        </div>
       </v-card-text>
 
       <v-divider />
@@ -127,5 +133,15 @@ export default {
   .v-text-field__details {
     display: none;
   }
+}
+
+.dialog-body {
+  height: 300px;
+  padding-top: 0px !important;
+  padding-bottom: 0 !important;
+}
+
+.ticker-list {
+  margin-top: 0px;
 }
 </style>
