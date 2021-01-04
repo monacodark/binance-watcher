@@ -27,8 +27,12 @@ export default {
     <div
       class="watch-list-item__label"
       @click="clickForTicker">
-      {{ data.ticker.toUpperCase() }}
-      {{ data.price || '--------' }}
+      <div class="watch-list-item__ticker">
+        {{ data.ticker.toUpperCase() }}
+      </div>
+      <div class="watch-list-item__price">
+        {{ data.price || '--------' }}
+      </div>
     </div>
     <div class="watch-list-item__btn-remove-wrapper">
       <v-btn
@@ -60,7 +64,9 @@ export default {
 
     &__label {
       cursor: pointer;
-      padding: 15px;
+      padding: 15px 65px 15px 15px;
+      display: flex;
+      justify-content: space-between;
     }
 
     &__btn-remove-wrapper {
