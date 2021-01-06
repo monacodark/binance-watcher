@@ -19,15 +19,15 @@ export default {
     },
   },
   mounted() {
-    this.$store.dispatch('loadTickerList')
-    this.$store.dispatch('initLocalData')
+    this.$store.dispatch('tickerListLoad')
+    this.$store.dispatch('localDataInit')
   },
 }
 </script>
 
 <template>
   <div class="home">
-    <v-container>
+    <v-container :fluid="true">
       <v-row>
         <v-col
           cols="12"

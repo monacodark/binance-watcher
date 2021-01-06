@@ -83,7 +83,7 @@ export default new Vuex.Store({
     },
   },
   actions: {
-    async loadTickerList({commit}) {
+    async tickerListLoad({commit}) {
       const {success, data, message} = await binanceRest.getExchangeInfo()
 
       if (!success) console.log(message)
@@ -98,7 +98,7 @@ export default new Vuex.Store({
       commit('tickerListSet', tickerList)
     },
 
-    initLocalData({commit}) {
+    localDataInit({commit}) {
       const watchList = storage.watchListGet()
       commit('watchListSet', watchList)
 
