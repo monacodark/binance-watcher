@@ -14,8 +14,8 @@ export default {
     }
   },
   computed: {
-    watchlistVisible() {
-      return this.$store.getters.watchlistVisible
+    watchListVisible() {
+      return this.$store.getters.watchListVisible
     },
   },
   mounted() {
@@ -32,13 +32,13 @@ export default {
         <v-col
           cols="12"
           xs="12"
-          :sm="watchlistVisible ? '8' : '12'"
-          :lg="watchlistVisible ? '9' : '12'">
+          :sm="watchListVisible ? '8' : '12'"
+          :lg="watchListVisible ? '9' : '12'">
           <chart />
         </v-col>
 
         <v-col
-          v-if="watchlistVisible"
+          v-if="watchListVisible"
           cols="12"
           xs="12"
           sm="4"

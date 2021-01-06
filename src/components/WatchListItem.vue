@@ -15,7 +15,7 @@ export default {
       console.log('click', this.data.ticker)
     },
     clickForRemove() {
-      this.$store.dispatch('removeItemFromWatchList', this.data.ticker)
+      this.$store.dispatch('watchListRemove', this.data.ticker)
     },
   },
 }

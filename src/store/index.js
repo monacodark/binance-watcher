@@ -13,7 +13,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    watchlistVisible: true,
+    watchListVisible: true,
     watchList: [],
     tickerList: [],
   },
@@ -21,8 +21,8 @@ export default new Vuex.Store({
     watchList(state) {
       return state.watchList
     },
-    watchlistVisible(state) {
-      return state.watchlistVisible
+    watchListVisible(state) {
+      return state.watchListVisible
     },
     tickerList(state) {
       return state.tickerList
@@ -30,7 +30,7 @@ export default new Vuex.Store({
   },
   mutations: {
     SOCKET_ONOPEN(state, data) {
-      console.log('Open', data, state)
+      console.log('open', data, state)
       return
     },
     SOCKET_ONMESSAGE(state, payload) {
@@ -54,30 +54,35 @@ export default new Vuex.Store({
       //   })
       // }
     },
-    watchlistVisible(state, payload) {
-      state.watchlistVisible = payload
+    SOCKET_ONERROR(state, payload) {
+      console.log('error', payload)
     },
-    tickerList(state, payload) {
+    SOCKET_ONCLOSE(state, payload) {
+      console.log('close', payload)
+    },
+    SOCKET_RECONNECT(state, payload) {
+      console.log('reconnect', payload)
+    },
+
+    tickerListSet(state, payload) {
       state.tickerList = payload
     },
-    watchListAdd(state, payload) {
-      state.watchList.push(payload)
+    watchListVisibleSet(state, payload) {
+      state.watchListVisible = payload
     },
     watchListSet(state, payload) {
       state.watchList = payload
     },
-    removeItemFromWatchList(state, payload) {
+    watchListAdd(state, payload) {
+      state.watchList.push(payload)
+    },
+    watchListRemove(state, payload) {
       state.watchList = state.watchList.filter(
           (item) => item.ticker !== payload,
       )
     },
   },
   actions: {
-    setWatchlistVisible({commit}, payload) {
-      commit('watchlistVisible', payload)
-      storage.watchListVisibleSet(payload)
-    },
-
     async loadTickerList({commit}) {
       const {success, data, message} = await binanceRest.getExchangeInfo()
 
@@ -90,7 +95,20 @@ export default new Vuex.Store({
         return {ticker: ticker.symbol.toLowerCase()}
       }).filter((ticker) => ticker)
 
-      commit('tickerList', tickerList)
+      commit('tickerListSet', tickerList)
+    },
+
+    initLocalData({commit}) {
+      const watchList = storage.watchListGet()
+      commit('watchListSet', watchList)
+
+      const watchListVisible = storage.watchListVisibleGet()
+      commit('watchListVisibleSet', watchListVisible)
+    },
+
+    watchListVisibleSet({commit}, payload) {
+      commit('watchListVisibleSet', payload)
+      storage.watchListVisibleSet(payload)
     },
 
     watchListAdd({commit}, payload) {
@@ -102,20 +120,12 @@ export default new Vuex.Store({
       }
 
       commit('watchListAdd', newTicker)
-
       storage.watchListAdd(newTicker)
     },
 
-    initLocalData({commit}) {
-      const watchListFromStorage = storage.watchListGet()
-      commit('watchListSet', watchListFromStorage)
-
-      const watchListVisibleFromStorage = storage.watchListVisibleGet()
-      commit('watchlistVisible', watchListVisibleFromStorage)
-    },
-
-    removeItemFromWatchList({commit}, payload) {
-      commit('removeItemFromWatchList', payload)
+    watchListRemove({commit}, payload) {
+      commit('watchListRemove', payload)
+      storage.watchListRemove(payload)
     },
   },
   modules: {},

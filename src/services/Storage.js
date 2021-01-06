@@ -3,13 +3,27 @@
  */
 export class Storage {
   /**
-   * @param {Object} payload
+   * @param {Object} ticker
    * @return {Array}
    */
-  watchListAdd(payload) {
+  watchListAdd(ticker) {
     const watchList = this.watchListGet()
-    watchList.push(payload)
+    watchList.push(ticker)
     this.watchListSet(watchList)
+
+    return watchList
+  }
+
+  /**
+   * @param {String} ticker
+   * @return {Array}
+   */
+  watchListRemove(ticker) {
+    const watchList = this.watchListGet()
+
+    const newWatchList = watchList.filter((item) => item.ticker !== ticker)
+
+    this.watchListSet(newWatchList)
 
     return watchList
   }

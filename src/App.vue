@@ -5,13 +5,13 @@ export default {
   data: () => ({
   }),
   computed: {
-    watchlistVisible() {
-      return this.$store.getters.watchlistVisible
+    watchListVisible() {
+      return this.$store.getters.watchListVisible
     },
   },
   methods: {
-    toogleWatchlistVisible() {
-      this.$store.dispatch('setWatchlistVisible', !this.watchlistVisible)
+    watchListVisibleToogle() {
+      this.$store.dispatch('watchListVisibleSet', !this.watchListVisible)
     },
   },
 }
@@ -32,11 +32,11 @@ export default {
       <v-spacer />
 
       <v-btn
-        :class="watchlistVisible ? '' : 'watchlist-btn_depressed'"
-        :outlined="watchlistVisible"
+        :class="watchListVisible ? '' : 'watchlist-btn_depressed'"
+        :outlined="watchListVisible"
         color="primary"
         small
-        @click="toogleWatchlistVisible">
+        @click="watchListVisibleToogle">
         Watchlist
       </v-btn>
     </v-app-bar>
