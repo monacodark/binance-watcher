@@ -8,14 +8,25 @@ export default {
     'watch-list-item': WatchListItem,
     'watch-list-add': WatchListAdd,
   },
+  props: {
+    watchList: Array,
+    tickerList: Array,
+    klineSelected: String,
+  },
   data() {
     return {
-      selectedItem: 0,
+      // selectedItem: 0,
     }
   },
-  computed: {
-    watchList() {
-      return this.$store.getters.watchList
+  methods: {
+    watchListAdd(val) {
+      this.$emit('watchListAdd', val)
+    },
+    watchListRemove(val) {
+      this.$emit('watchListRemove', val)
+    },
+    klineSelect(val) {
+      this.$emit('klineSelect', val)
     },
   },
 }
@@ -28,7 +39,10 @@ export default {
 
       <v-spacer />
 
-      <watch-list-add />
+      <watch-list-add
+        :tickerList="tickerList"
+        :watchList="watchList"
+        @watchListAdd="watchListAdd($event)" />
     </v-card-title>
 
     <v-divider />
@@ -39,7 +53,10 @@ export default {
       <watch-list-item
         v-for="item in watchList"
         :key="item.ticker"
-        :data="item" />
+        :item="item"
+        :klineSelected="klineSelected"
+        @klineSelect="klineSelect($event)"
+        @watchListRemove="watchListRemove($event)" />
     </ul>
     <div
       v-else

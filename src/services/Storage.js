@@ -66,4 +66,23 @@ export class Storage {
     )
     return payload
   }
+
+  /**
+   * @param {String} ticker
+   * @return {String}
+   */
+  klineSelectedSet(ticker) {
+    localStorage.setItem(
+        'BW_KLINE_SELECTED',
+        ticker,
+    )
+    return ticker
+  }
+
+  /**
+   * @return {String}
+   */
+  klineSelectedGet() {
+    return localStorage.getItem('BW_KLINE_SELECTED')
+  }
 }

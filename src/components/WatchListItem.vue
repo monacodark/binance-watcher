@@ -3,8 +3,8 @@ export default {
   name: 'watch-item',
   components: {},
   props: {
-    data: Object,
-    timerId: null,
+    item: Object,
+    klineSelected: String,
   },
   data() {
     return {
@@ -12,10 +12,10 @@ export default {
   },
   methods: {
     clickForTicker() {
-      console.log('click', this.data.ticker)
+      this.$emit('klineSelect', this.item.ticker)
     },
     clickForRemove() {
-      this.$store.dispatch('watchListRemove', this.data.ticker)
+      this.$emit('watchListRemove', this.item.ticker)
     },
   },
 }
@@ -23,21 +23,24 @@ export default {
 
 <template>
   <div
-    class="watch-list-item">
+    :class="{
+      'watch-list-item': true,
+      'watch-list-item_selected': item.ticker === klineSelected,
+    }">
     <div
       class="watch-list-item__label"
       @click="clickForTicker">
       <div class="watch-list-item__ticker">
-        {{ data.ticker.toUpperCase() }}
+        {{ item.ticker.toUpperCase() }}
       </div>
       <div class="watch-list-item__price">
-        {{ data.price || '--------' }}
+        {{ item.price || '--------' }}
       </div>
     </div>
     <div class="watch-list-item__btn-remove-wrapper">
       <v-btn
         class="ticker__btn-remove"
-        color="ptimary"
+        color="grey lighten-1"
         icon
         @click="clickForRemove">
         <v-icon>mdi-close</v-icon>
@@ -50,6 +53,10 @@ export default {
   .watch-list-item {
     position: relative;
     border-bottom: 1px solid #424242;
+
+    &_selected {
+      color: #F0B90B;
+    }
 
     &:last-child {
       border-bottom: none;

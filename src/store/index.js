@@ -1,21 +1,26 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 
-import {BinanceRest} from '@/services/BinanceRest'
-// import {BinanceWebsocket} from '~/services/BinanceWebsocket'
+import {BinanceApi} from '@/services/BinanceApi'
 import {Storage} from '@/services/Storage'
 
-const binanceRest = new BinanceRest()
-// const binanceWebsocket = new BinanceWebsocket()
-const storage = new Storage()
-
 Vue.use(Vuex)
+
+const binanceApi = new BinanceApi()
+const storage = new Storage()
 
 export default new Vuex.Store({
   state: {
     watchListVisible: true,
     watchList: [],
     tickerList: [],
+    klineSelected: null,
+    chartKline: [],
+    socket: {
+      isConnected: false,
+      isReconnect: false,
+      reconnectError: false,
+    },
   },
   getters: {
     watchList(state) {
@@ -27,41 +32,65 @@ export default new Vuex.Store({
     tickerList(state) {
       return state.tickerList
     },
+    socket(state) {
+      return state.socket
+    },
+    klineSelected(state) {
+      return state.klineSelected
+    },
   },
   mutations: {
-    SOCKET_ONOPEN(state, data) {
-      console.log('open', data, state)
-      return
+    SOCKET_ONOPEN(state, event) {
+      // Vue.prototype.$socket = event.currentTarget
+      state.socket.isConnected = true
+      state.socket.isReconnect = false
+      state.socket.reconnectError = false
+
+      console.log('SOCKET_ONOPEN')
     },
     SOCKET_ONMESSAGE(state, payload) {
-      console.log('Message', payload)
-      // const {stream} = payload
+      const {stream, data} = payload
 
-      // if (!stream) return
+      const isStreamAggTrade = stream && stream.indexOf('aggTrade') > -1
 
-      // const isStreamKline = stream.indexOf('kline') > -1
+      if (isStreamAggTrade) {
+        const {
+          s: ticker,
+          p: price,
+        } = data
 
-      // if (isStreamKline) {
-      //   const currentPrice = +payload.data.k.c
-      //   const ticker = payload.data.k.s.toLowerCase()
+        // console.log('aggTrade', ticker, price)
 
-      //   if (!currentPrice || !ticker) return
+        if (!price || !ticker) return
 
-      //   state.watchList.map((_ticker) => {
-      //     if (ticker === _ticker.ticker) {
-      //       _ticker.price = currentPrice
-      //     }
-      //   })
-      // }
+        state.watchList.map((item) => {
+          if (ticker.toLowerCase() === item.ticker) {
+            const isUSD = item.ticker.indexOf('usd') > 1
+            if (isUSD) item.price = Number(price).toFixed(2)
+            else item.price = price
+          }
+        })
+
+        return
+      }
+
+      console.log('SOCKET_ONMESSAGE', payload)
     },
-    SOCKET_ONERROR(state, payload) {
-      console.log('error', payload)
+    SOCKET_ONERROR(state, event) {
+      console.error('SOCKET_ONERROR', state, event)
     },
-    SOCKET_ONCLOSE(state, payload) {
-      console.log('close', payload)
+    SOCKET_ONCLOSE(state) {
+      state.socket.isConnected = false
+      state.socket.reconnectError = false
+
+      console.log('SOCKET_ONCLOSE')
     },
-    SOCKET_RECONNECT(state, payload) {
-      console.log('reconnect', payload)
+    SOCKET_RECONNECT(state) {
+      state.socket.isReconnect = true
+      console.log('SOCKET_RECONNECT')
+    },
+    SOCKET_RECONNECT_ERROR(state) {
+      state.socket.reconnectError = true
     },
 
     tickerListSet(state, payload) {
@@ -76,46 +105,73 @@ export default new Vuex.Store({
     watchListAdd(state, payload) {
       state.watchList.push(payload)
     },
-    watchListRemove(state, payload) {
+    watchListRemove(state, ticker) {
       state.watchList = state.watchList.filter(
-          (item) => item.ticker !== payload,
+          (item) => item.ticker !== ticker,
       )
+    },
+    klineSelect(state, ticker) {
+      state.klineSelected = ticker
     },
   },
   actions: {
     async tickerListLoad({commit}) {
-      const {success, data, message} = await binanceRest.getExchangeInfo()
+      const {
+        success,
+        tickerList,
+        message,
+      } = await binanceApi.tickerListGet()
 
-      if (!success) console.log(message)
-
-      console.log(data.symbols)
-
-      const tickerList = data.symbols.map((ticker) => {
-        if (ticker.status !== 'TRADING') return false
-        return {ticker: ticker.symbol.toLowerCase()}
-      }).filter((ticker) => ticker)
+      if (!success) {
+        console.log(message)
+        return false
+      }
 
       commit('tickerListSet', tickerList)
     },
 
-    localDataInit({commit}) {
+    async localDataInit({commit}) {
+      const watchListVisible = storage.watchListVisibleGet()
+      commit('watchListVisibleSet', watchListVisible)
+
       const watchList = storage.watchListGet()
       commit('watchListSet', watchList)
 
-      const watchListVisible = storage.watchListVisibleGet()
-      commit('watchListVisibleSet', watchListVisible)
+      const klineSelected = (
+        storage.klineSelectedGet() || watchList[0].ticker || null
+      )
+      commit('klineSelect', klineSelected)
+
+      const kline = await binanceApi.klineGet({
+        interval: '1h',
+        symbol: klineSelected,
+      })
+
+      console.log(kline)
     },
 
-    watchListVisibleSet({commit}, payload) {
-      commit('watchListVisibleSet', payload)
-      storage.watchListVisibleSet(payload)
+    watchListVisibleSet({commit, state}, visibled) {
+      commit('watchListVisibleSet', visibled)
+      storage.watchListVisibleSet(visibled)
+
+      const {watchList} = state
+
+      if (watchList.length) {
+        if (visibled) binanceApi.watchListSubscribe(watchList)
+        else binanceApi.watchListUnsubscribe(watchList)
+      }
     },
 
-    watchListAdd({commit}, payload) {
-      // binanceWebsocket.subscribe('aggTrade', [payload])
+    streamsSubscribe({state}) {
+      const {watchList} = state
+      if (watchList.length) binanceApi.watchListSubscribe(watchList)
+    },
+
+    watchListAdd({commit}, ticker) {
+      binanceApi.watchListAdd(ticker)
 
       const newTicker = {
-        ticker: payload,
+        ticker,
         price: null,
       }
 
@@ -123,9 +179,18 @@ export default new Vuex.Store({
       storage.watchListAdd(newTicker)
     },
 
-    watchListRemove({commit}, payload) {
-      commit('watchListRemove', payload)
-      storage.watchListRemove(payload)
+    watchListRemove({commit}, ticker) {
+      binanceApi.watchListRemove(ticker)
+
+      commit('watchListRemove', ticker)
+      storage.watchListRemove(ticker)
+    },
+
+    klineSelect({commit}, ticker) {
+      commit('klineSelect', ticker)
+      storage.klineSelectedSet(ticker)
+      // binanceApi.klineSelect(ticker)
+      // console.log(ticker)
     },
   },
   modules: {},

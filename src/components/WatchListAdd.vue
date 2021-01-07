@@ -2,7 +2,9 @@
 
 export default {
   name: 'watch-list-add',
-  components: {
+  props: {
+    tickerList: Array,
+    watchList: Array,
   },
   data() {
     return {
@@ -16,7 +18,7 @@ export default {
   },
   computed: {
     filteredTickerList() {
-      return this.$store.getters.tickerList
+      return this.tickerList
           .filter((ticker) => {
             if (
               ticker.ticker.indexOf(this.searchValue.toLowerCase()) > -1
@@ -25,7 +27,7 @@ export default {
             return false
           })
           .filter((ticker) => {
-            return !this.$store.getters.watchList.find((_ticker) => {
+            return !this.watchList.find((_ticker) => {
               return ticker.ticker === _ticker.ticker
             })
           })
@@ -45,7 +47,7 @@ export default {
       this.dialog = true
     },
     onAdd() {
-      this.$store.dispatch('watchListAdd', this.selectValue)
+      this.$emit('watchListAdd', this.selectValue)
       this.dialog = false
 
       this.refresh()

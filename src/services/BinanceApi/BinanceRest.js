@@ -1,4 +1,4 @@
-import {_HttpClient} from './_HttpClient'
+import {_HttpClient} from '../_HttpClient'
 
 /**
  * https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md
@@ -11,6 +11,12 @@ export class BinanceRest extends _HttpClient {
     super({
       baseURL: 'https://api.binance.com/api',
     })
+
+    this.intervals = [
+      '1m', '3m', '5m', '15m', '30m',
+      '1h', '2h', '4h', '6h', '8h', '12h',
+      '1d', '3d', '1w', '1M',
+    ]
   }
 
   /**
@@ -25,23 +31,19 @@ export class BinanceRest extends _HttpClient {
    * @return {object}
    */
   async getKlines(params) {
-    const intervals = [
-      '1m', '3m', '5m', '15m', '30m',
-      '1h', '2h', '4h', '6h', '8h', '12h',
-      '1d', '3d', '1w', '1M',
-    ]
-
     const invalidInterval = (
       !params.interval ||
-      intervals.indexOf(params.interval < 0)
+      this.intervals.indexOf(params.interval) < 0
     )
 
-    if (invalidInterval) {
+    if (invalidInterval || !params.symbol) {
       return {
         success: false,
-        code: 'invalid_interval',
+        code: 'invalid_interval_or_symbol',
       }
     }
+
+    params.symbol = params.symbol.toUpperCase()
 
     return await this._sendRequest('GET', 'v3/klines', params)
   }
