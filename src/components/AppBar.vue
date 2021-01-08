@@ -1,9 +1,20 @@
 <script>
+import Intervals from './Intervals'
+
 export default {
   name: 'app-bar',
+  components: {
+    'intervals': Intervals,
+  },
   props: {
     socketIsConnected: Boolean,
     watchListVisible: Boolean,
+    intervalSelected: String,
+  },
+  data() {
+    return {
+      intervals: ['1m', '5m', '15m', '30m', '1h', '4h', '1d', '1w'],
+    }
   },
   methods: {
     watchListVisibleToogle() {
@@ -18,11 +29,15 @@ export default {
     app
     color=""
     dark>
-    <v-toolbar-title
+    <intervals
+      :intervals="intervals"
+      :intervalSelected="intervalSelected"
+      @intervalSelect="$emit('intervalSelect', $event)" />
+    <!-- <v-toolbar-title
       class="font-weight-black primary--text"
       color="">
       BINANCE WATCHER
-    </v-toolbar-title>
+    </v-toolbar-title> -->
 
     <v-spacer />
 

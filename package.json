@@ -20,6 +20,7 @@
     "trading-vue-js": "^1.0.0",
     "vue": "^2.6.11",
     "vue-native-websocket": "^2.0.14",
+    "vue-resize": "^1.0.0",
     "vue-router": "^3.2.0",
     "vuetify": "^2.2.11",
     "vuex": "^3.4.0"

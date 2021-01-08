@@ -4,9 +4,13 @@ import vuetify from './plugins/vuetify'
 import App from './App.vue'
 import router from './router'
 import store from './store'
+import VueResize from 'vue-resize'
+import 'vue-resize/dist/vue-resize.css'
+
 
 Vue.config.productionTip = false
 
+Vue.use(VueResize)
 Vue.use(
     VueNativeSock,
     'wss://stream.binance.com:9443/stream', // /stream?streams=btcusdt@miniTicker

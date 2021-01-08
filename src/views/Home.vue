@@ -2,6 +2,7 @@
 import WatchList from '@/components/WatchList'
 import Chart from '@/components/Chart'
 import AppBar from '@/components/AppBar'
+import {mapState} from 'vuex'
 
 export default {
   name: 'home',
@@ -10,50 +11,27 @@ export default {
     'chart': Chart,
     'app-bar': AppBar,
   },
-  data() {
-    return {
-      // connection: null,
-    }
-  },
   computed: {
-    watchList() {
-      return this.$store.getters.watchList
-    },
-    watchListVisible() {
-      return this.$store.getters.watchListVisible
-    },
     socketIsConnected() {
       return this.$store.getters.socket.isConnected
     },
-    tickerList() {
-      return this.$store.getters.tickerList
-    },
-    klineSelected() {
-      return this.$store.getters.klineSelected
-    },
+    ...mapState([
+      'watchList',
+      'watchListVisible',
+      'tickerList',
+      'klineSelected',
+      'chartKline',
+      'intervalSelected',
+    ]),
   },
   watch: {
     socketIsConnected(isConnected) {
-      if (isConnected) this.$store.dispatch('streamsSubscribe')
+      if (isConnected) this.$store.dispatch('streamsInitSubscribe')
     },
   },
   mounted() {
     this.$store.dispatch('localDataInit')
     this.$store.dispatch('tickerListLoad')
-  },
-  methods: {
-    watchListVisibleToogle(val) {
-      this.$store.dispatch('watchListVisibleSet', val)
-    },
-    watchListAdd(val) {
-      this.$store.dispatch('watchListAdd', val)
-    },
-    watchListRemove(val) {
-      this.$store.dispatch('watchListRemove', val)
-    },
-    klineSelect(val) {
-      this.$store.dispatch('klineSelect', val)
-    },
   },
 }
 </script>
@@ -63,7 +41,9 @@ export default {
     <app-bar
       :socketIsConnected="socketIsConnected"
       :watchListVisible="watchListVisible"
-      @toogleVisible="watchListVisibleToogle($event)" />
+      :intervalSelected="intervalSelected"
+      @toogleVisible="$store.dispatch('watchListVisibleSet', $event)"
+      @intervalSelect="$store.dispatch('intervalSelect', $event)" />
 
     <v-container :fluid="true">
       <v-row>
@@ -72,7 +52,10 @@ export default {
           xs="12"
           :sm="watchListVisible ? '8' : '12'"
           :lg="watchListVisible ? '9' : '12'">
-          <chart />
+          <chart
+            :chartKline="chartKline"
+            :intervalSelected="intervalSelected"
+            :klineSelected="klineSelected" />
         </v-col>
 
         <v-col
@@ -85,9 +68,9 @@ export default {
             :watchList="watchList"
             :tickerList="tickerList"
             :klineSelected="klineSelected"
-            @watchListAdd="watchListAdd($event)"
-            @watchListRemove="watchListRemove($event)"
-            @klineSelect="klineSelect($event)" />
+            @watchListAdd="$store.dispatch('watchListAdd', $event)"
+            @watchListRemove="$store.dispatch('watchListRemove', $event)"
+            @klineSelect="$store.dispatch('klineSelect', $event)" />
         </v-col>
       </v-row>
     </v-container>

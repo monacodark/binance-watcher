@@ -11692,6 +11692,11 @@ vue-native-websocket@^2.0.14:
   resolved "https://registry.yarnpkg.com/vue-native-websocket/-/vue-native-websocket-2.0.14.tgz#fddb56f9f93d2ecc861486ee3c8f29506ea2a168"
   integrity sha512-oK8+xG1gmqRs4JngHGwEc4zWoRjsdMB20Sz8pemkh4lW2Vr2676/cDRtd30aGnO2xF7Oxf003wS5JO0kypUsCw==
 
+vue-resize@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/vue-resize/-/vue-resize-1.0.0.tgz#380565b36e411190d85f8fbd3aa230a4cc22f1a5"
+  integrity sha512-SkIi19neeJClapYavfmHiewFZkkTfITVWskg/dIL8b1Eb+RlvnCb8fjGUwLjQJmsw2qsRiiAo4o7BAJVM4pcOA==
+
 vue-router@^3.2.0:
   version "3.4.9"
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-3.4.9.tgz#c016f42030ae2932f14e4748b39a1d9a0e250e66"

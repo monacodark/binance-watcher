@@ -14,6 +14,7 @@ export class BinanceWss {
   /**
    * @param {String} method
    * @param {Array} params
+   * @return {Number}
    */
   _send(method, params) {
     Vue.prototype.$socket.send(
@@ -24,20 +25,22 @@ export class BinanceWss {
         }),
     )
 
-    this._actionId++
+    return ++this._actionId
   }
 
   /**
    * @param {Array} params
+   * @return {Number}
    */
   subscribe(params) {
-    this._send('SUBSCRIBE', params)
+    return this._send('SUBSCRIBE', params)
   }
 
   /**
    * @param {Array} params
+   * @return {Number}
    */
   unsubscribe(params) {
-    this._send('UNSUBSCRIBE', params)
+    return this._send('UNSUBSCRIBE', params)
   }
 }

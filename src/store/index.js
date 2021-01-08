@@ -16,27 +16,21 @@ export default new Vuex.Store({
     tickerList: [],
     klineSelected: null,
     chartKline: [],
+    chart: {
+      ticker: null,
+      kline: [],
+      interval: null,
+    },
     socket: {
       isConnected: false,
       isReconnect: false,
       reconnectError: false,
     },
+    intervalSelected: '1h',
   },
   getters: {
-    watchList(state) {
-      return state.watchList
-    },
-    watchListVisible(state) {
-      return state.watchListVisible
-    },
-    tickerList(state) {
-      return state.tickerList
-    },
     socket(state) {
       return state.socket
-    },
-    klineSelected(state) {
-      return state.klineSelected
     },
   },
   mutations: {
@@ -52,6 +46,7 @@ export default new Vuex.Store({
       const {stream, data} = payload
 
       const isStreamAggTrade = stream && stream.indexOf('aggTrade') > -1
+      const isStreamKline = stream && stream.indexOf('kline') > -1
 
       if (isStreamAggTrade) {
         const {
@@ -70,6 +65,49 @@ export default new Vuex.Store({
             else item.price = price
           }
         })
+
+        return
+      } else if (isStreamKline) {
+        const isCurrentTicker = state.klineSelected === data.k.s.toLowerCase()
+
+        if (!isCurrentTicker) return
+
+        const {
+          t: openTime,
+          o: open,
+          h: high,
+          l: low,
+          c: close,
+          v: volume,
+        } = data.k
+
+        const {chartKline} = state
+
+        if (!chartKline.length) return
+
+        const newKline = [
+          openTime,
+          Number(open),
+          Number(high),
+          Number(low),
+          Number(close),
+          Number(volume),
+        ]
+
+        const needAdd = (
+          chartKline[chartKline.length - 1][0] < openTime
+        )
+
+        const needUpdate = (
+          chartKline[chartKline.length - 1][0] === openTime
+        )
+
+        if (needAdd) {
+          chartKline.push(newKline)
+        } else if (needUpdate) {
+          chartKline.pop()
+          chartKline.push(newKline)
+        }
 
         return
       }
@@ -113,6 +151,12 @@ export default new Vuex.Store({
     klineSelect(state, ticker) {
       state.klineSelected = ticker
     },
+    chartKlineSet(state, kline) {
+      state.chartKline = kline
+    },
+    intervalSelect(state, interval) {
+      state.intervalSelected = interval
+    },
   },
   actions: {
     async tickerListLoad({commit}) {
@@ -142,12 +186,22 @@ export default new Vuex.Store({
       )
       commit('klineSelect', klineSelected)
 
-      const kline = await binanceApi.klineGet({
-        interval: '1h',
+      const intervalSelected = (
+        storage.intervalSelectedGet() || '1h'
+      )
+      commit('intervalSelect', intervalSelected)
+
+      const {success, data: kline, message} = await binanceApi.klineGet({
+        interval: intervalSelected,
         symbol: klineSelected,
       })
 
-      console.log(kline)
+      if (!success) {
+        console.log('localDataInit Error', message)
+        return
+      }
+
+      commit('chartKlineSet', kline)
     },
 
     watchListVisibleSet({commit, state}, visibled) {
@@ -162,9 +216,11 @@ export default new Vuex.Store({
       }
     },
 
-    streamsSubscribe({state}) {
-      const {watchList} = state
+    streamsInitSubscribe({state}) {
+      const {watchList, klineSelected} = state
+
       if (watchList.length) binanceApi.watchListSubscribe(watchList)
+      if (klineSelected) binanceApi.klineStart(klineSelected, '1h')
     },
 
     watchListAdd({commit}, ticker) {
@@ -186,11 +242,57 @@ export default new Vuex.Store({
       storage.watchListRemove(ticker)
     },
 
-    klineSelect({commit}, ticker) {
+    async klineSelect({commit, state}, ticker) {
+      const {klineSelected, intervalSelected} = state
+
+      if (klineSelected === ticker) return
+
+      binanceApi.klineStop(klineSelected, intervalSelected)
+
       commit('klineSelect', ticker)
+      commit('chartKlineSet', [])
+
+      const {success, data: kline, message} = await binanceApi.klineGet({
+        interval: intervalSelected,
+        symbol: ticker,
+      })
+
+      if (!success) {
+        console.log('localDataInit Error', message)
+        return
+      }
+
+      commit('chartKlineSet', kline)
       storage.klineSelectedSet(ticker)
-      // binanceApi.klineSelect(ticker)
-      // console.log(ticker)
+
+      binanceApi.klineStart(ticker, intervalSelected)
+    },
+
+    async intervalSelect({commit, state}, interval) {
+      const {klineSelected, intervalSelected} = state
+
+
+      if (intervalSelected === interval) return
+
+      binanceApi.klineStop(klineSelected, intervalSelected)
+
+      commit('intervalSelect', interval)
+      commit('chartKlineSet', [])
+
+      const {success, data: kline, message} = await binanceApi.klineGet({
+        interval,
+        symbol: klineSelected,
+      })
+
+      if (!success) {
+        console.log('intervalSelect Error', message)
+        return
+      }
+
+      commit('chartKlineSet', kline)
+      storage.intervalSelectedSet(interval)
+
+      binanceApi.klineStart(klineSelected, interval)
     },
   },
   modules: {},

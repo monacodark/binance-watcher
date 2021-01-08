@@ -85,4 +85,23 @@ export class Storage {
   klineSelectedGet() {
     return localStorage.getItem('BW_KLINE_SELECTED')
   }
+
+  /**
+   * @param {String} interval
+   * @return {String}
+   */
+  intervalSelectedSet(interval) {
+    localStorage.setItem(
+        'BW_INTERVAL_SELECTED',
+        interval,
+    )
+    return interval
+  }
+
+  /**
+   * @return {String}
+   */
+  intervalSelectedGet() {
+    return localStorage.getItem('BW_INTERVAL_SELECTED')
+  }
 }
