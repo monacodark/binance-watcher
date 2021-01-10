@@ -15,6 +15,16 @@ yarn serve
 yarn build
 ```
 
+### Compiles and hot-reloads for electron development
+```
+yarn electron:serve
+```
+
+### Compiles for electron
+```
+yarn electron:build
+```
+
 ### Run your unit tests
 ```
 yarn test:unit
