@@ -1,76 +1,41 @@
 <script>
-import WatchList from '@/components/WatchList'
-import Chart from '@/components/Chart'
-import AppBar from '@/components/AppBar'
+import ContainerWatchlist from '@/components/ContainerWatchlist'
+import ContainerChart from '@/components/ContainerChart'
 import {mapState} from 'vuex'
 
 export default {
   name: 'home',
   components: {
-    'watch-list': WatchList,
-    'chart': Chart,
-    'app-bar': AppBar,
+    'container-watchlist': ContainerWatchlist,
+    'container-chart': ContainerChart,
   },
   computed: {
-    socketIsConnected() {
-      return this.$store.getters.socket.isConnected
-    },
     ...mapState([
-      'watchList',
-      'watchListVisible',
-      'tickerList',
-      'klineSelected',
-      'chartKline',
-      'intervalSelected',
+      'watchlistVisible',
     ]),
-  },
-  watch: {
-    socketIsConnected(isConnected) {
-      if (isConnected) this.$store.dispatch('streamsInitSubscribe')
-    },
-  },
-  mounted() {
-    this.$store.dispatch('localDataInit')
-    this.$store.dispatch('tickerListLoad')
   },
 }
 </script>
 
 <template>
   <div class="home">
-    <app-bar
-      :socketIsConnected="socketIsConnected"
-      :watchListVisible="watchListVisible"
-      :intervalSelected="intervalSelected"
-      @toogleVisible="$store.dispatch('watchListVisibleSet', $event)"
-      @intervalSelect="$store.dispatch('intervalSelect', $event)" />
-
     <v-container :fluid="true">
       <v-row>
         <v-col
           cols="12"
           xs="12"
-          :sm="watchListVisible ? '8' : '12'"
-          :lg="watchListVisible ? '9' : '12'">
-          <chart
-            :chartKline="chartKline"
-            :intervalSelected="intervalSelected"
-            :klineSelected="klineSelected" />
+          :sm="watchlistVisible ? '8' : '12'"
+          :lg="watchlistVisible ? '9' : '12'">
+          <container-chart />
         </v-col>
 
         <v-col
-          v-if="watchListVisible"
+          v-if="watchlistVisible"
           cols="12"
           xs="12"
           sm="4"
           lg="3">
-          <watch-list
-            :watchList="watchList"
-            :tickerList="tickerList"
-            :klineSelected="klineSelected"
-            @watchListAdd="$store.dispatch('watchListAdd', $event)"
-            @watchListRemove="$store.dispatch('watchListRemove', $event)"
-            @klineSelect="$store.dispatch('klineSelect', $event)" />
+          <container-watchlist />
         </v-col>
       </v-row>
     </v-container>

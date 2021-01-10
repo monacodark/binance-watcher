@@ -15,7 +15,7 @@ export class BinanceApi {
 
   /**
    */
-  async tickerListGet() {
+  async tickersGet() {
     const {
       success,
       data,
@@ -24,7 +24,7 @@ export class BinanceApi {
 
     if (!success) return {success, message}
 
-    const tickerList = data.symbols
+    const tickers = data.symbols
         .map(
             (item) => {
               const isTrading = item.status === 'TRADING'
@@ -34,38 +34,38 @@ export class BinanceApi {
         )
         .filter((item) => item)
 
-    return {success, tickerList}
+    return {success, tickers}
   }
 
   /**
-   * @param {Array} watchList
+   * @param {Array} watchlist
    * @return {Number}
    */
-  watchListSubscribe(watchList) {
-    const params = watchList.map((item) => `${item.ticker}@aggTrade`)
+  watchlistSubscribe(watchlist) {
+    const params = watchlist.map((item) => `${item.ticker}@aggTrade`)
     return this.wss.subscribe(params)
   }
 
   /**
-   * @param {Array} watchList
+   * @param {Array} watchlist
    * @return {Number}
    */
-  watchListUnsubscribe(watchList) {
-    const params = watchList.map((item) => `${item.ticker}@aggTrade`)
+  watchlistUnsubscribe(watchlist) {
+    const params = watchlist.map((item) => `${item.ticker}@aggTrade`)
     return this.wss.unsubscribe(params)
   }
 
   /**
    * @param {String} ticker
    */
-  watchListAdd(ticker) {
+  watchlistAdd(ticker) {
     this.wss.subscribe([`${ticker}@aggTrade`])
   }
 
   /**
    * @param {String} ticker
    */
-  watchListRemove(ticker) {
+  watchlistRemove(ticker) {
     this.wss.unsubscribe([`${ticker}@aggTrade`])
   }
 
@@ -73,7 +73,7 @@ export class BinanceApi {
    * @param {String} ticker
    * @param {String} interval
    */
-  klineStop(ticker, interval) {
+  klineUnsubscribe(ticker, interval) {
     this.wss.unsubscribe([`${ticker}@kline_${interval}`])
   }
 
@@ -81,7 +81,7 @@ export class BinanceApi {
    * @param {String} ticker
    * @param {String} interval
    */
-  klineStart(ticker, interval) {
+  klineSubscribe(ticker, interval) {
     this.wss.subscribe([`${ticker}@kline_${interval}`])
   }
 

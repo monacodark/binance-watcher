@@ -1,21 +1,17 @@
 <script>
 export default {
-  name: 'watch-item',
+  name: 'watchlist-item',
   components: {},
   props: {
     item: Object,
-    klineSelected: String,
-  },
-  data() {
-    return {
-    }
+    selectedTicker: String,
   },
   methods: {
-    clickForTicker() {
-      this.$emit('klineSelect', this.item.ticker)
+    onTickerSelect() {
+      this.$emit('chartTickerSet', this.item.ticker)
     },
-    clickForRemove() {
-      this.$emit('watchListRemove', this.item.ticker)
+    onRemove() {
+      this.$emit('watchlistRemove', this.item.ticker)
     },
   },
 }
@@ -24,25 +20,25 @@ export default {
 <template>
   <div
     :class="{
-      'watch-list-item': true,
-      'watch-list-item_selected': item.ticker === klineSelected,
+      'watchlist-item': true,
+      'watchlist-item_selected': item.ticker === selectedTicker,
     }">
     <div
-      class="watch-list-item__label"
-      @click="clickForTicker">
-      <div class="watch-list-item__ticker">
+      class="watchlist-item__label"
+      @click="onTickerSelect">
+      <div class="watchlist-item__ticker">
         {{ item.ticker.toUpperCase() }}
       </div>
-      <div class="watch-list-item__price">
-        {{ item.price || '--------' }}
+      <div class="watchlist-item__price">
+        {{ item.price || '----------' }}
       </div>
     </div>
-    <div class="watch-list-item__btn-remove-wrapper">
+    <div class="watchlist-item__btn-remove-wrapper">
       <v-btn
         class="ticker__btn-remove"
         color="grey lighten-1"
         icon
-        @click="clickForRemove">
+        @click="onRemove">
         <v-icon>mdi-close</v-icon>
       </v-btn>
     </div>
@@ -50,7 +46,7 @@ export default {
 </template>
 
 <style lang="scss">
-  .watch-list-item {
+  .watchlist-item {
     position: relative;
     border-bottom: 1px solid #424242;
 
@@ -64,7 +60,7 @@ export default {
 
     &:hover {
       color: #F0B90B;
-      .watch-list-item__btn-remove-wrapper {
+      .watchlist-item__btn-remove-wrapper {
         opacity: 1;
       }
     }

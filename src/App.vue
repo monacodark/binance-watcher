@@ -1,9 +1,30 @@
 <script>
+import {mapState} from 'vuex'
+import AppBar from '@/components/AppBar'
+
 export default {
   name: 'app',
-  components: {},
-  data: () => ({
-  }),
+  components: {
+    'app-bar': AppBar,
+  },
+  computed: {
+    socketIsConnected() {
+      return this.socket.isConnected
+    },
+    ...mapState([
+      'socket',
+    ]),
+  },
+  watch: {
+    socketIsConnected(isConnected) {
+      if (isConnected) this.$store.dispatch('streamsInitSubscribe')
+    },
+  },
+  async mounted() {
+    this.$store.dispatch('appLocalDataInit')
+    await this.$store.dispatch('tickersLoad')
+    await this.$store.dispatch('chartKlineLoad')
+  },
 }
 </script>
 
@@ -11,6 +32,8 @@ export default {
   <v-app>
     <v-main>
       <div class="main-wrapper">
+        <app-bar />
+
         <router-view />
       </div>
     </v-main>
@@ -18,11 +41,6 @@ export default {
 </template>
 
 <style lang="scss">
-  .watchlist-btn_depressed {
-    color: #212121 !important;
-    border: thin solid;
-  }
-
   body {
     background: #272727;
   }

@@ -1,24 +1,23 @@
 <script>
-
 export default {
-  name: 'watch-list-add',
+  name: 'watchlist-add',
   props: {
-    tickerList: Array,
-    watchList: Array,
+    tickers: Array,
+    watchlist: Array,
   },
   data() {
     return {
       dialog: false,
       timerId: null,
-      selectValue: '',
+      selectedValue: '',
       searchValue: '',
       inputSearchValue: '',
       listSize: 6,
     }
   },
   computed: {
-    filteredTickerList() {
-      return this.tickerList
+    tickersFiltered() {
+      return this.tickers
           .filter((ticker) => {
             if (
               ticker.ticker.indexOf(this.searchValue.toLowerCase()) > -1
@@ -27,18 +26,18 @@ export default {
             return false
           })
           .filter((ticker) => {
-            return !this.watchList.find((_ticker) => {
+            return !this.watchlist.find((_ticker) => {
               return ticker.ticker === _ticker.ticker
             })
           })
     },
-    croppedTickerList() {
-      return this.filteredTickerList.slice(0, this.listSize)
+    tickersCropped() {
+      return this.tickersFiltered.slice(0, this.listSize)
     },
   },
   methods: {
     refresh() {
-      this.selectValue = ''
+      this.selectedValue = ''
       this.searchValue = ''
       this.inputSearchValue = ''
     },
@@ -47,7 +46,7 @@ export default {
       this.dialog = true
     },
     onAdd() {
-      this.$emit('watchListAdd', this.selectValue)
+      this.$emit('watchlistAdd', this.selectedValue)
       this.dialog = false
 
       this.refresh()
@@ -58,7 +57,7 @@ export default {
       this.timerId = setTimeout(
           async () => {
             this.searchValue = e
-            this.selectValue = ''
+            this.selectedValue = ''
           },
           500,
       )
@@ -90,6 +89,7 @@ export default {
           v-model="inputSearchValue"
           label="Search"
           class="search-input"
+          :autofocus="true"
           filled
           @input="onInputSearch" />
       </v-card-title>
@@ -99,19 +99,19 @@ export default {
       <v-card-text
         class="dialog-body">
         <v-radio-group
-          v-model="selectValue"
+          v-model="selectedValue"
           class="ticker-list"
           column>
           <v-radio
-            v-for="item in croppedTickerList"
+            v-for="item in tickersCropped"
             :key="item.ticker"
             class="ticker-item"
             :label="item.ticker.toUpperCase()"
             :value="item.ticker" />
         </v-radio-group>
         <div
-          v-if="filteredTickerList.length > listSize">
-          ..and {{ filteredTickerList.length - listSize }} items
+          v-if="tickersFiltered.length > listSize">
+          ..and {{ tickersFiltered.length - listSize }} items
         </div>
       </v-card-text>
 
@@ -122,7 +122,7 @@ export default {
         <v-btn
           color="primary"
           text
-          :disabled="!selectValue"
+          :disabled="!selectedValue"
           @click="onAdd"
           v-text="'Continue'" />
       </v-card-actions>

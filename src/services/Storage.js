@@ -3,105 +3,111 @@
  */
 export class Storage {
   /**
+   */
+  constructor() {
+    this.init()
+  }
+
+  /**
+   */
+  init() {
+    const localData = this.get()
+
+    if (!localData) {
+      this.set({
+        watchlistVisible: true,
+        watchlist: [],
+        chart: {
+          ticker: 'btcusdt',
+          interval: '1h',
+        },
+      })
+    }
+  }
+
+  /**
+   * @return {Object}
+   */
+  get() {
+    return JSON.parse(localStorage.getItem('BINANCE_WATCHER'))
+  }
+
+  /**
+   * @param {Object} payload
+   */
+  set(payload) {
+    localStorage.setItem(
+        'BINANCE_WATCHER',
+        JSON.stringify(payload),
+    )
+  }
+
+  /**
    * @param {Object} ticker
-   * @return {Array}
+   * @return {Object}
    */
-  watchListAdd(ticker) {
-    const watchList = this.watchListGet()
-    watchList.push(ticker)
-    this.watchListSet(watchList)
+  watchlistAdd(ticker) {
+    const localData = this.get()
+    localData.watchlist.push(ticker)
+    this.set(localData)
 
-    return watchList
+    return localData
   }
 
   /**
    * @param {String} ticker
-   * @return {Array}
+   * @return {Object}
    */
-  watchListRemove(ticker) {
-    const watchList = this.watchListGet()
+  watchlistRemove(ticker) {
+    const localData = this.get()
 
-    const newWatchList = watchList.filter((item) => item.ticker !== ticker)
+    localData.watchlist = localData.watchlist
+        .filter((item) => item.ticker !== ticker)
 
-    this.watchListSet(newWatchList)
+    this.set(localData)
 
-    return watchList
+    return localData
   }
 
   /**
-   * @return {Array}
+   * @param {Boolean} visibled
+   * @return {Object}
    */
-  watchListGet() {
-    return JSON.parse(localStorage.getItem('BW_WATCHLIST')) || []
-  }
+  watchlistVisibleSet(visibled) {
+    const localData = this.get()
 
-  /**
-   * @param {Array} payload
-   * @return {Array}
-   */
-  watchListSet(payload) {
-    localStorage.setItem(
-        'BW_WATCHLIST',
-        JSON.stringify(payload),
-    )
-    return payload
-  }
+    localData.watchlistVisible = visibled
 
-  /**
-   * @return {Boolean}
-   */
-  watchListVisibleGet() {
-    return JSON.parse(localStorage.getItem('BW_WATCHLIST_VISIBLE')) ?
-    true : false
-  }
+    this.set(localData)
 
-  /**
-   * @param {Boolean} payload
-   * @return {Boolean}
-   */
-  watchListVisibleSet(payload) {
-    localStorage.setItem(
-        'BW_WATCHLIST_VISIBLE',
-        JSON.stringify(payload),
-    )
-    return payload
+    return localData
   }
 
   /**
    * @param {String} ticker
-   * @return {String}
+   * @return {Object}
    */
-  klineSelectedSet(ticker) {
-    localStorage.setItem(
-        'BW_KLINE_SELECTED',
-        ticker,
-    )
-    return ticker
-  }
+  chartTickerSet(ticker) {
+    const localData = this.get()
 
-  /**
-   * @return {String}
-   */
-  klineSelectedGet() {
-    return localStorage.getItem('BW_KLINE_SELECTED')
+    localData.chart.ticker = ticker
+
+    this.set(localData)
+
+    return localData
   }
 
   /**
    * @param {String} interval
-   * @return {String}
+   * @return {Object}
    */
-  intervalSelectedSet(interval) {
-    localStorage.setItem(
-        'BW_INTERVAL_SELECTED',
-        interval,
-    )
-    return interval
-  }
+  chartIntervalSet(interval) {
+    const localData = this.get()
 
-  /**
-   * @return {String}
-   */
-  intervalSelectedGet() {
-    return localStorage.getItem('BW_INTERVAL_SELECTED')
+    localData.chart.interval = interval
+
+    this.set(localData)
+
+    return localData
   }
 }

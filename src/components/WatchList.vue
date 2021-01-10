@@ -1,33 +1,17 @@
 <script>
-import WatchListItem from '@/components/WatchListItem'
-import WatchListAdd from '@/components/WatchListAdd'
+import WatchlistItem from '@/components/WatchlistItem'
+import WatchlistAdd from '@/components/WatchlistAdd'
 
 export default {
-  name: 'watch-list',
+  name: 'watchlist',
   components: {
-    'watch-list-item': WatchListItem,
-    'watch-list-add': WatchListAdd,
+    'watchlist-item': WatchlistItem,
+    'watchlist-add': WatchlistAdd,
   },
   props: {
-    watchList: Array,
-    tickerList: Array,
-    klineSelected: String,
-  },
-  data() {
-    return {
-      // selectedItem: 0,
-    }
-  },
-  methods: {
-    watchListAdd(val) {
-      this.$emit('watchListAdd', val)
-    },
-    watchListRemove(val) {
-      this.$emit('watchListRemove', val)
-    },
-    klineSelect(val) {
-      this.$emit('klineSelect', val)
-    },
+    watchlist: Array,
+    tickers: Array,
+    selectedTicker: String,
   },
 }
 </script>
@@ -39,24 +23,24 @@ export default {
 
       <v-spacer />
 
-      <watch-list-add
-        :tickerList="tickerList"
-        :watchList="watchList"
-        @watchListAdd="watchListAdd($event)" />
+      <watchlist-add
+        :tickers="tickers"
+        :watchlist="watchlist"
+        @watchlistAdd="$emit('watchlistAdd', $event)" />
     </v-card-title>
 
     <v-divider />
 
     <ul
-      v-if="watchList.length"
-      class="watch-list">
-      <watch-list-item
-        v-for="item in watchList"
+      v-if="watchlist.length"
+      class="watchlist">
+      <watchlist-item
+        v-for="item in watchlist"
         :key="item.ticker"
         :item="item"
-        :klineSelected="klineSelected"
-        @klineSelect="klineSelect($event)"
-        @watchListRemove="watchListRemove($event)" />
+        :selectedTicker="selectedTicker"
+        @chartTickerSet="$emit('chartTickerSet', $event)"
+        @watchlistRemove="$emit('watchlistRemove', $event)" />
     </ul>
     <div
       v-else
@@ -67,7 +51,7 @@ export default {
 </template>
 
 <style lang="scss">
-  .watch-list {
+  .watchlist {
     padding-left: 0px !important;
   }
 

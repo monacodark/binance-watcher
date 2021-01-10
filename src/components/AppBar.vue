@@ -1,65 +1,89 @@
 <script>
-import Intervals from './Intervals'
+import Intervals from '@/components/Intervals'
+import ConnectionStatus from '@/components/ConnectionStatus'
+import ButtonToggle from '@/components/ButtonToggle'
+import {mapState} from 'vuex'
 
 export default {
   name: 'app-bar',
   components: {
     'intervals': Intervals,
+    'connection-status': ConnectionStatus,
+    'button-toggle': ButtonToggle,
   },
-  props: {
-    socketIsConnected: Boolean,
-    watchListVisible: Boolean,
-    intervalSelected: String,
-  },
-  data() {
-    return {
-      intervals: ['1m', '5m', '15m', '30m', '1h', '4h', '1d', '1w'],
-    }
-  },
-  methods: {
-    watchListVisibleToogle() {
-      this.$emit('toogleVisible', !this.watchListVisible)
+  computed: {
+    socketIsConnected() {
+      return this.socket.isConnected
     },
+    ...mapState([
+      'socket',
+      'watchlistVisible',
+      'chart',
+    ]),
   },
 }
 </script>
 
 <template>
-  <v-app-bar
+  <div
+    class="app-bar"
     app
     color=""
     dark>
     <intervals
-      :intervals="intervals"
-      :intervalSelected="intervalSelected"
-      @intervalSelect="$emit('intervalSelect', $event)" />
-    <!-- <v-toolbar-title
-      class="font-weight-black primary--text"
-      color="">
-      BINANCE WATCHER
-    </v-toolbar-title> -->
+      class="intervals"
+      :intervalSelected="chart.interval"
+      @intervalSelect="$store.dispatch('chartIntervalSet', $event)" />
 
-    <v-spacer />
+    <div class="right-wrapper">
+      <connection-status
+        :status="socket.isConnected" />
 
-    <div class="connection-status-bar">
-      <v-icon
-        v-if="socketIsConnected"
-        color="green"
-        v-text="'mdi-check-all'" />
-
-      <v-icon
-        v-else
-        color="blue"
-        v-text="'mdi-timer-sand-empty'" />
+      <button-toggle
+        :pressed="watchlistVisible"
+        :text="'Watchlist'"
+        @toggle="$store.dispatch('watchlistVisibleSet', $event)" />
     </div>
-
-    <v-btn
-      :class="watchListVisible ? '' : 'watchlist-btn_depressed'"
-      :outlined="watchListVisible"
-      color="primary"
-      small
-      @click="watchListVisibleToogle">
-      Watchlist
-    </v-btn>
-  </v-app-bar>
+  </div>
 </template>
+
+<style lang="scss">
+.app-bar {
+  box-shadow:
+    0px 2px 4px -1px rgba(0, 0, 0, 0.2),
+    0px 4px 5px 0px rgba(0, 0, 0, 0.14),
+    0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+  background-color: #272727;
+  padding: 10px 15px;
+
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+  .intervals {
+    background-color: #272727 !important;
+    overflow-x: scroll;
+  }
+
+  .right-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  @media screen and (max-width: 640px) {
+    display: flex;
+    flex-direction: column;
+
+    .app-bar {
+      height: 100px !important;
+    }
+
+    .right-wrapper {
+      display: flex;
+      align-items: center;
+      margin-top: 10px;
+    }
+  }
+}
+</style>
