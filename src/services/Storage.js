@@ -16,7 +16,7 @@ export class Storage {
     if (!localData) {
       this.set({
         watchlistVisible: true,
-        watchlist: [],
+        watchlist: ['btcusdt'],
         chart: {
           ticker: 'btcusdt',
           interval: '1h',
